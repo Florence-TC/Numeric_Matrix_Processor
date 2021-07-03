@@ -1,0 +1,79 @@
+<h2>Recursion in Python</h2>
+<html>
+ <head></head>
+ <body>
+  <p>You’ve already learned the theory behind <strong>recursion</strong>. In this topic, we’re gonna put this knowledge to use by learning how to write <strong>recursive functions</strong>. To make sure that we are on the same page, let's remind ourselves of the definition of <strong>recursion</strong>.</p> 
+  <p><strong>Recursion</strong> is a method of solving a problem by breaking it down into smaller instances of the same problem. The solutions to the sub-problems are then combined to get a solution to the original problem. </p> 
+  <h2>How to construct a recursive function?</h2> 
+  <p>In programming, recursion is achieved when a function <strong>calls itself</strong> from its own code – sounds simple, doesn't it? </p> 
+  <p>The main function can generally do only two things: either perform a simple task and return a value or call itself with new arguments (by doing so dividing the problem into smaller instances of itself). Take eating candies as an example. Let’s say the goal is to eat all candies in a vase. We can do this by taking one candy at a time. Eating one candy is a recursive action (<strong>recursive case</strong>), after which we undertake the same action the next time. We do this for every candy, evaluating that we should take another one to reach the goal, until there are no candies left. </p> 
+  <p>Here's an important thing: a recursive function has to terminate to be used in a program, otherwise it can lead to an infinite loop, and the program will continue to execute forever. A condition that stops the recursion is called the <strong>base case</strong>.</p> 
+  <p>So, there are two obligatory steps in each recursive function: </p> 
+  <ol> 
+   <li>A <strong>base case</strong> works as a stop sign: it is the smallest problem that can be solved without any further subdivision. It is some condition where a function just outputs a result, there is no need for further reduction of a problem.</li> 
+   <li>A <strong>recursive case,</strong> also called<strong> a reduction step,</strong> is the part where the function calls itself to try and solve a smaller problem. </li> 
+  </ol> 
+  <p>Let's construct a recursive function for finding the factorial of an integer number in Python!</p> 
+  <p>First, let’s make sure it can be solved recursively: </p> 
+  <p style="text-align: center;"><samp>5! = 5 * 4 * 3 * 2 * 1 = 5 * 4! </samp></p> 
+  <p style="text-align: center;"><samp>4! = 4 * 3 * 2 * 1 = 4 * 3!</samp></p> 
+  <p style="text-align: center;">etc.</p> 
+  <p>This means that we can calculate factorial of a number by multiplying this number by the factorial of the previous number:</p> 
+  <p style="text-align: center;"><samp>N! = N * (N-1)! </samp></p> 
+  <p>Now, to write a recursive function we need to define the recursive case and the base case.</p> 
+  <p><strong>Defining the recursive case. </strong>We need to define a step where we're trying to find the solution to simpler instances of our problem. With the factorial of <em>n,</em> this would be multiplying <em>n</em> by the factorial of <em><strong> </strong>n-1.</em></p> 
+  <pre><code class="language-python">def recursive_factorial(n):
+    # Recursive case
+    return n * recursive_factorial(n-1)</code></pre> 
+  <p><strong>Defining the base case. </strong>To avoid our function calling itself infinitely, we need to set the stopping condition or give the solution to the smallest problem. In our case, the simplest problem is <em>0!</em>.</p> 
+  <pre><code class="language-python">def recursive_factorial(n):
+    # Base case
+    if n == 0:
+        return 1
+    # Recursive case
+    else:
+        return n * recursive_factorial(n - 1)</code></pre> 
+  <p>This is the typical structure of a recursive algorithm. If the current problem represents a simple case, solve it. If not, divide it into subproblems and apply the same strategy to them. </p> 
+  <h2>When not to loop?</h2> 
+  <p>An important thing to understand is that recursion and loops are basically very similar. If we can solve a problem using recursion, we can also solve it using loops. However, they have different purposes: if loops are designed to <strong>repeat </strong>a task, recursion is meant to <strong>break down</strong> a large task into smaller ones. It is sometimes just easier to solve a problem using recursion. </p> 
+  <p>Let's consider a task connected with text processing. In Italian, vowels with diacritics (special symbols like <em>é</em> or <em>à</em>) are sometimes replaced with a vowel and an apostrophe – for simplicity in typing (e.g. <em>e' </em>and <em>a'</em>). Imagine that we want to find such cases and replace them with the proper vowels; recursion can help us find the index of such an apostrophe in the word. Let's also specify that it should be neither the first nor the last symbol in the given word (otherwise it might be a quotation mark). </p> 
+  <p>Our recursive function will take a word where to look for an apostrophe and a number from where to start the search, initially, zero. It will return either the index of the apostrophe (the one that meets our conditions) or <em>-1</em> if there is no such apostrophe in the word: </p> 
+  <pre><code class="language-python">vowels = {'a', 'e', 'i', 'o', 'u'}
+
+
+def find_apostrophe(word, start): 
+
+    i = word.find("'", start)
+    
+    if i == -1:  # there are no apostrophes in the given word
+        return -1  
+    
+    if i == 0:  # found apostrophe is the first symbol in the word, it doesn't meet the conditions
+        return find_apostrophe(word, 1)  # keep searching further
+
+    elif i == len(word) - 1:  # the apostrophe is the last symbol, doesn't meet the conditions
+        return -1  # we have reached the end of the word and haven't found a correct apostrophe
+    
+    else:
+        previous_char = word[i - 1]
+        if previous_char in vowels:
+            return i
+
+        else:  # the found apostrophe does not meet the conditions, we keep searching further
+            return find_apostrophe(word, i + 1)</code></pre> 
+  <p>Now, let's analyze what each line of code does.</p> 
+  <p><code class="language-python">string.find()</code> is a string method that returns either the index of a specified string we are looking for or <em>-1</em> if it couldn't find any entries of the specified string. The search starts at the element with the index <code class="language-python">start</code>.</p> 
+  <p>Firstly, if no apostrophe is found, our function returns <em>-1</em>.</p> 
+  <p>Then, if at this step we have found an apostrophe that is the first symbol in the word (i.e. its index = 0), we don't need such apostrophe according to our conditions. So we keep searching for another one starting from the next symbol onwards. That's where <strong>recursion </strong>comes to play: our function performs this very task, but this time, we start from the index = 1.</p> 
+  <p>However, there are a few more cases we need to handle. If the found apostrophe's index equals the length of the word ("<em>-1</em>" in the condition is needed because indexing starts from 0), it means that we have reached the end of the word and haven't found a correct apostrophe. </p> 
+  <p>And if everything was okay till now, we check the last condition: the previous character should be a vowel. If the condition is met – great, we have found an apostrophe we were looking for. And if not – we keep searching, calling our own function again, with another "start" parameter.</p> 
+  <p>Let's now see <strong>how it works</strong>. </p> 
+  <p>If we call our function with the arguments <em>ma'ma</em> and <em>0</em>, everything is simple: the first and only apostrophe meets all our conditions, and the function will return <em>2</em>.</p> 
+  <pre><code class="language-python">print(find_apostrophe("ma'ma", 0))  # 2</code></pre> 
+  <p>However, if we pass the string <em>'wave'</em>, everything is not going to be that simple. In the beginning, the function will find the first apostrophe; but its index = 0, so it will have to look for the next apostrophe, starting from the index = 1. Then it will find the last apostrophe, but it's also not what we are looking for. And the function will return <em>-1</em> because we have reached the end of the given word.</p> 
+  <pre><code class="language-python">print(find_apostrophe("'wave'", 0))  # -1</code></pre> 
+  <p>So, as you have seen, this task can be quite easily solved with the help of recursion, and solving it using loops would be much less natural.</p> 
+  <h2>Summing up </h2> 
+  <p>Recursion can seem daunting at first but there are cases where it can be amazingly helpful. Likewise, loops can also be a better choice, depending on the scenario, so knowing how to do both effectively is a great tool for a programmer.</p>
+ </body>
+</html>
